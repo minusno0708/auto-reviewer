@@ -14,7 +14,9 @@ jobs:
         run: echo "Reviewing PR"
 
       - name: Get Changes
-        run: git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }} > changes.txt
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }} > changes.txt
 
       - name: Write Changes
         run: cat changes.txt
