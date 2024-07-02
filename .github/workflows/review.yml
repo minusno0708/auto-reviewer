@@ -16,7 +16,7 @@ jobs:
         run: echo "Reviewing PR"
 
       - name: Get Changes
-        run: git diff ${{ github.base_ref }} ${{ github.head_ref }} > changes.txt
+        run: git diff origin/${{ github.base_ref }} origin/${{ github.head_ref }} > changes.txt
 
       - name: Write Changes
         run: cat changes.txt
