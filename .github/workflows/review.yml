@@ -1,0 +1,25 @@
+name: Automated Review
+on: pull_request
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Start Review
+        run: echo "Reviewing PR"
+
+      - name: Get Changes
+        run: git diff origin/${{ github.base_ref }} origin/${{ github.head_ref }} > changes.txt
+
+      - name: Write Changes
+        run: cat changes.txt
+      
+      - name: End Review
+        run: echo "Review complete"
