@@ -10,7 +10,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Run review
-        run: |
-          echo "Reviewing PR"
-          echo "Review complete"
+      - name: Start Review
+        run: echo "Reviewing PR"
+
+      - name: Get Changes
+        run: git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }} > changes.txt
+
+      - name: Write Changes
+        run: cat changes.txt
+      
+      - name: End Review
+        run: echo "Review complete"
