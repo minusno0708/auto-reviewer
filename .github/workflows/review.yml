@@ -11,15 +11,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
-      - name: Start Review
-        run: echo "Reviewing PR"
 
-      - name: Get Changes
+      - name: Fetch Diff
         run: git diff origin/${{ github.base_ref }} origin/${{ github.head_ref }} > diff.txt
 
-      - name: Write Changes
-        run: cat diff.txt
-      
-      - name: End Review
-        run: echo "Review complete"
+      - name: Write Comment
+        run: gh pr review ${{ github.event.number }} --body "$(cat diff.txt)" --comment
