@@ -11,30 +11,19 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var promptPath = "prompt.json"
+
 func main() {
 	URL := "https://api.openai.com/v1/chat/completions"
 
 	loadEnv()
 	apiKey := os.Getenv("API_KEY")
-	fmt.Println("API Key: ", apiKey)
 
-	jsonData := []byte(`{
-		"model": "gpt-3.5-turbo",
-		"messages": [
-			{
-				"role": "system",
-				"content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."
-			},
-			{
-				"role": "user",
-				"content": "Compose a poem that explains the concept of recursion in programming."
-			}
-		]
-	}`)
+	prompt := readFile(promptPath)
 
 	client := &http.Client{}
 
-	req, err := http.NewRequest("POST", URL, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("POST", URL, bytes.NewBuffer(prompt))
 	if err != nil {
 		log.Fatal("Error reading request. ", err)
 	}
@@ -61,4 +50,12 @@ func loadEnv() {
 	if err != nil {
 		fmt.Println("Error loading .env file")
 	}
+}
+
+func readFile(filePath string) []byte {
+	jsonData, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		log.Fatal("Error reading file. ", err)
+	}
+	return jsonData
 }
