@@ -10,6 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          token: ${{ secrets.ACCESS_TOKEN }}
           fetch-depth: 0
 
       - name: Fetch Diff
@@ -17,3 +18,5 @@ jobs:
 
       - name: Write Comment
         run: gh pr review ${{ github.event.number }} --body "$(cat diff.txt)" --comment
+        with:
+          GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
