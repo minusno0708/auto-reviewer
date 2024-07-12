@@ -16,10 +16,10 @@ jobs:
         run: echo "Reviewing PR"
 
       - name: Get Changes
-        run: git diff origin/${{ github.base_ref }} origin/${{ github.head_ref }} > changes.txt
+        run: git diff origin/${{ github.base_ref }} origin/${{ github.head_ref }} > diff.txt
 
       - name: Write Changes
-        run: cat changes.txt
+        run: cat diff.txt
       
       - name: End Review
         run: echo "Review complete"
