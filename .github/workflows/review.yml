@@ -16,6 +16,9 @@ jobs:
       - name: Fetch Diff
         run: git diff origin/${{ github.base_ref }} origin/${{ github.head_ref }} > diff.txt
 
+      - name: Set Env
+        run: echo "API_KEY=${{ secrets.API_KEY }}" >> .env
+
       - name: Write Comment
         run: gh pr review ${{ github.event.number }} --body "$(cat diff.txt)" --comment
         env:
