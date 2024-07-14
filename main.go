@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -15,6 +16,21 @@ import (
 
 var promptPath = "prompt.json"
 var diffPath = "diff.txt"
+
+type GPTResponse struct {
+	Id      string `json:"id"`
+	Object  string `json:"object"`
+	Created int    `json:"created"`
+	Model   string `json:"model"`
+
+	Choices []struct {
+		Index   int `json:"index"`
+		Message struct {
+			Role    string `json:"role"`
+			Content string `json:"content"`
+		} `json:"message"`
+	} `json:"choices"`
+}
 
 func main() {
 	URL := "https://api.openai.com/v1/chat/completions"
@@ -44,7 +60,14 @@ func main() {
 		log.Fatal("Error reading body. ", err)
 	}
 
-	fmt.Println(string(body))
+	var gptResponse GPTResponse
+	err = json.Unmarshal(body, &gptResponse)
+	if err != nil {
+		log.Fatal("Error unmarshaling JSON. ", err)
+	}
+
+	messageContext := gptResponse.Choices[0].Message.Content
+	fmt.Println(messageContext)
 
 }
 
