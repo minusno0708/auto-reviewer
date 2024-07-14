@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -18,6 +17,8 @@ var URL = "https://api.openai.com/v1/chat/completions"
 
 var promptPath = "prompt.json"
 var diffPath = "diff.txt"
+
+var savePath = "message.txt"
 
 type GPTResponse struct {
 	Id      string `json:"id"`
@@ -50,7 +51,7 @@ func main() {
 	respBody := sendRequest(req)
 	message := extractMessage(respBody)
 
-	fmt.Println(message)
+	saveMessage(message)
 }
 
 func loadEnv() {
@@ -106,4 +107,11 @@ func extractMessage(body []byte) string {
 	}
 
 	return gptResponse.Choices[0].Message.Content
+}
+
+func saveMessage(message string) {
+	err := ioutil.WriteFile(savePath, []byte(message), 0644)
+	if err != nil {
+		log.Fatal("Error writing file. ", err)
+	}
 }
