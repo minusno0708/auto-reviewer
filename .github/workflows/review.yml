@@ -20,11 +20,10 @@ jobs:
       - name: Fetch Diff
         run: git diff origin/${{ github.base_ref }} origin/${{ github.head_ref }} > diff.txt
 
-      - name: Set Env
-        run: echo "API_KEY=${{ secrets.API_KEY }}" >> .env
-
       - name: Request to GPT
         run: go run gpt_client.go
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
 
       - name: Write Comment
         run: gh pr review ${{ github.event.number }} --body "$(cat message.txt)" --comment
