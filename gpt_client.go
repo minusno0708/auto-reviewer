@@ -9,8 +9,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-
-	"github.com/joho/godotenv"
 )
 
 var URL = "https://api.openai.com/v1/chat/completions"
@@ -36,7 +34,6 @@ type GPTResponse struct {
 }
 
 func main() {
-	loadEnv()
 	apiKey := os.Getenv("API_KEY")
 
 	prompt := getPrompt()
@@ -52,13 +49,6 @@ func main() {
 	message := extractMessage(respBody)
 
 	saveMessage(message)
-}
-
-func loadEnv() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 }
 
 func getPrompt() string {
