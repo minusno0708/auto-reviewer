@@ -22,8 +22,11 @@ jobs:
 
       - name: Set Env
         run: echo "API_KEY=${{ secrets.API_KEY }}" >> .env
-        
+
+      - name: Request to GPT
+        run: go run gpt_client.go
+
       - name: Write Comment
-        run: gh pr review ${{ github.event.number }} --body "$(cat diff.txt)" --comment
+        run: gh pr review ${{ github.event.number }} --body "$(cat message.txt)" --comment
         env:
           GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
