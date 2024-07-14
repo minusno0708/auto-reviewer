@@ -14,6 +14,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var URL = "https://api.openai.com/v1/chat/completions"
+
 var promptPath = "prompt.json"
 var diffPath = "diff.txt"
 
@@ -33,14 +35,10 @@ type GPTResponse struct {
 }
 
 func main() {
-	URL := "https://api.openai.com/v1/chat/completions"
-
 	loadEnv()
 	apiKey := os.Getenv("API_KEY")
 
 	prompt := getPrompt()
-
-	client := &http.Client{}
 
 	req, err := http.NewRequest("POST", URL, bytes.NewBuffer([]byte(prompt)))
 	if err != nil {
@@ -49,26 +47,10 @@ func main() {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+apiKey)
 
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatal("Error reading response. ", err)
-	}
-	defer resp.Body.Close()
+	respBody := sendRequest(req)
+	message := extractMessage(respBody)
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal("Error reading body. ", err)
-	}
-
-	var gptResponse GPTResponse
-	err = json.Unmarshal(body, &gptResponse)
-	if err != nil {
-		log.Fatal("Error unmarshaling JSON. ", err)
-	}
-
-	messageContext := gptResponse.Choices[0].Message.Content
-	fmt.Println(messageContext)
-
+	fmt.Println(message)
 }
 
 func loadEnv() {
@@ -97,4 +79,31 @@ func readFile(filePath string) []byte {
 		log.Fatal("Error reading file. ", err)
 	}
 	return jsonData
+}
+
+func sendRequest(req *http.Request) []byte {
+	client := &http.Client{}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatal("Error reading response. ", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal("Error reading body. ", err)
+	}
+
+	return body
+}
+
+func extractMessage(body []byte) string {
+	var gptResponse GPTResponse
+	err := json.Unmarshal(body, &gptResponse)
+	if err != nil {
+		log.Fatal("Error unmarshaling JSON. ", err)
+	}
+
+	return gptResponse.Choices[0].Message.Content
 }
