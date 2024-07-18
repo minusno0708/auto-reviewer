@@ -1,8 +1,11 @@
 name: Automated Review
-on: pull_request
+on: 
+  issue_comment:
+    types: [created]
 
 jobs:
-  build:
+  review:
+    if: github.event.issue.pull_request
     runs-on: ubuntu-latest
     permissions:
       contents: read
