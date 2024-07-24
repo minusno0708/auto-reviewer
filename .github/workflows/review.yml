@@ -19,11 +19,13 @@ jobs:
         with:
           go-version: 1.22
 
-      - name: confirmate branch name
-        run: echo ${{ github.base_ref }} ${{ github.head_ref }}
-
       - name: Fetch Diff
-        run: git diff origin/${{ github.base_ref }} origin/${{ github.head_ref }} > diff.txt
+        run: |
+          BASE_REF=$(jq --raw-output .pull_request.base.ref $GITHUB_EVENT_PATH)
+          HEAD_REF=$(jq --raw-output .pull_request.head.ref $GITHUB_EVENT_PATH)
+          git diff origin/$BASE_REF origin/$HEAD_REF > diff.txt
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
 
       - name: Request to GPT
         run: go run gpt_client.go
