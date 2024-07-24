@@ -33,6 +33,6 @@ jobs:
           API_KEY: ${{ secrets.API_KEY }}
 
       - name: Write Comment
-        run: gh pr review ${{ github.event.number }} --body "$(cat message.txt)" --comment
+        run: gh pr review ${{ github.event.pull_request.number }} --body "$(cat message.txt)" --comment
         env:
           GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
